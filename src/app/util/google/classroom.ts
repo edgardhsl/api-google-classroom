@@ -38,7 +38,6 @@ export class Classroom {
 
     public static async createCourseAnnouncements(courseId: string, body: any) {
         try {
-            console.log(`courseId: ${courseId}`)
             return this.classroom.courses.announcements.create({courseId: courseId, requestBody: body});
         } catch (ex) {
             console.log(ex);
