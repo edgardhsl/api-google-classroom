@@ -1,6 +1,6 @@
 {
   "name": "api-google-classroom",
-  "version": "1.1.0-d46fd40",
+  "version": "1.1.0",
   "description": "Google Classroom API",
   "main": "main.js",
   "scripts": {
