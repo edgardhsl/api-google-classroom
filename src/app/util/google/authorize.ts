@@ -36,6 +36,11 @@ export class Authorize {
     private _updateToken(oAuth: OAuth2Client) {
         try {
             const token = JSON.parse(fs.readFileSync(TOKEN_PATH, {encoding:'utf8', flag:'r'})) as GetTokenResponse;
+
+            if(token.res?.data?.expiry_date <= (new Date()).getTime()) {
+                throw 'Expired token';
+            }
+
             oAuth.setCredentials(token.tokens);
         } catch(ex) {
             this._getAccessToken(oAuth);
@@ -48,7 +53,7 @@ export class Authorize {
           scope: SCOPES,
         });
 
-        console.log('Authorize this app by visiting this url:', authUrl);
+        console.log('Authorize this app by visiting this url:', authUrl, ' ');
         
         const rl = readLine.createInterface({
           input: process.stdin,

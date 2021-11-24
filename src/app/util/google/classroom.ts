@@ -36,6 +36,16 @@ export class Classroom {
         }
     }
 
+    public static async createCourseAnnouncements(courseId: string, body: any) {
+        try {
+            console.log(`courseId: ${courseId}`)
+            return this.classroom.courses.announcements.create({courseId: courseId, requestBody: body});
+        } catch (ex) {
+            console.log(ex);
+            return {code: -1, message: 'Não foi possível retornar a lista de anúncios.'}
+        }
+    }
+
     public static async getCourseStudents(courseId: string) {
         try {
             return this.classroom.courses.students.list({courseId: courseId});
