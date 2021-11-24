@@ -53,4 +53,17 @@ export class CourseController {
         }
     }
 
+    @Post(':id/announcements')
+    @Middleware([])
+    async createAnnouncements(req: Request, res: Response, next: NextFunction) {
+        try {
+            const response: any = await Classroom.createCourseAnnouncements(req.params.id, {});
+            const list = response.data.announcements;
+            res.status(200).json(list);
+        } catch (ex) {
+            console.error(ex);
+            return res.status(500).json(ex);
+        }
+    }
+
 }
