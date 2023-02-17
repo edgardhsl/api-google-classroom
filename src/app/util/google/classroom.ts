@@ -1,4 +1,4 @@
-import { classroom_v1, google } from "googleapis";
+import { classroom_v1, google  } from "googleapis";
 import { Authorize } from ".";
 
 export class Classroom {
@@ -7,6 +7,15 @@ export class Classroom {
 
     static init(auth?: Authorize) {
         this.classroom = google.classroom({version: 'v1', auth: auth?.authClient});
+    }
+
+    public static async createCourse(couse: classroom_v1.Params$Resource$Courses$Create) {
+        try {
+            return this.classroom.courses.create(couse);
+        } catch (ex) {
+            console.log(ex);
+            return {code: -1, message: 'Não foi possível retornar a lista de cursos.'}
+        }
     }
 
     public static async getCourseList() {
