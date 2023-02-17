@@ -61,7 +61,6 @@ export class CourseController {
             const list = response.data.announcements;
             res.status(200).json(list);
         } catch (ex) {
-            console.error(ex);
             return res.status(500).json(ex);
         }
     }
