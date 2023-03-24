@@ -1,6 +1,5 @@
-import { Course, CourseResponse } from 'app/models/course';
-import { Category } from 'app/models/category';
-import { Moodle } from '../util/moodle';
+import { Classroom } from "app/util/google";
+import { classroom_v1 } from "googleapis";
 
 export class CourseConsumer {
 
@@ -11,7 +10,7 @@ export class CourseConsumer {
         this.categories = await this._getCategories(params);
 
         for (const course of this._castToMoodle(params)) {
-            responses.push(await Moodle.createCourse([course]));
+            responses.push(await Classroom.createCourse([course]));
         }
 
         return responses;
@@ -21,14 +20,13 @@ export class CourseConsumer {
         return await Moodle.getCategory();
     }
 
-    private static _castToMoodle(params: any[]) {
+    private static _castToClassroom(params: any[]) {
         return params.map((item: any) => {
-            const category: Category | null = this.categories ? this.categories.find(item1 => +item1.idnumber == item.cursoId) : null;
-            const course: Course = {
-                idnumber: item.id,
-                fullname: `${category?.name} - ${item.nome}`,
-                categoryid: category?.id ?? null,
-                shortname: `${this._normalize(category?.name).slice(0, 3)}${this._normalize(item.nome).slice(0, 3).toUpperCase()}`
+            const course: classroom_v1.Params$Resource$Courses$Create = {
+                requestBody {
+                    id: item.id,
+                    item: item.name
+                },
             }
 
             return course;
