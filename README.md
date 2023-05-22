@@ -51,28 +51,37 @@ npm install npm@latest -g
 
 ### Instalação
 
-1. Clone the repo
+#### 1. Clone the repo
 
 ```sh
 git clone https://github.com/edgardhsl/api-google-classroom.git
 ```
 
-2. Instale as dependências do projeto
+#### 2. Instale as dependências do projeto
 
 ```sh
 npm install
 ```
 
-3. Configure os dados do ambiente Google Classroom no arquivo: `src/app/config/credentials.json`
+#### 3. Configure suas credenciais do API do Google Classroom e salve no arquivo: `src/app/config/credentials.json`
 
-```JS
-{
-    "endpoint_url": "http://localhost", // URL do ambiente Moodle
-    "token": "862663ea5cc19ac196fa14671aeb3b7a" // Token gerado pela API do Moodle
-}
+Para saber como gerar esse arquivo veja este link: [Criar credenciais de acesso](https://developers.google.com/workspace/guides/create-credentials?hl=pt-br)
+Logo após iniciar o serviço, clique no link de autorização que aparecerá no terminal:
+
+```sh
+ npm run dev
+
+> api-google-classroom@1.2.0 dev
+> ts-node -r tsconfig-paths/register ./src/main.ts --inspect
+
+ É necessário configurar a autorização para o uso da API do Google Classroom, para isso clique no link abaixo:
+
+ http://localhost:4444/auth/authorize
 ```
+Então abrirá o navegador para selecionar em qual conta da Google irá gerar o token de autorização, por fim irá exibir uma tela de sucesso.
 
-4. Configure os dados dos brokers do Apache Kafka no arquivo: `src/app/config/kafka_brokers.json`
+
+#### 4. Configure os dados dos brokers do Apache Kafka no arquivo: `src/app/config/kafka_brokers.json`
 
 ```JS
 [
