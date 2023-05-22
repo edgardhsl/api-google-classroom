@@ -1,4 +1,4 @@
-import { Classroom } from "app/util/google";
+import { Classroom } from "app/util/classroom";
 
 export class ClassworkConsumer {
 

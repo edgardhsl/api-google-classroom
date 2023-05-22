@@ -1,15 +1,17 @@
-import { Controller, Get, Middleware, Post } from '@overnightjs/core';
+import { Controller, Get, Middleware } from '@overnightjs/core';
 import { NextFunction, Request, Response } from 'express';
-import { Classroom } from '../util/google';
+import { Classroom } from '../util/classroom';
 
 @Controller('api/courses')
 export class CourseController {
+    
+    private classroom = new Classroom();
 
     @Get('')
     @Middleware([])
     async get(req: Request, res: Response, next: NextFunction) {
         try {
-            const response: any = await Classroom.getCourseList();
+            const response: any = await this.classroom.course.list();
             const list = response?.data?.courses.filter((courses: any) => courses.enrollmentCode);
             res.status(200).json(list);
         } catch (ex) {
@@ -17,6 +19,31 @@ export class CourseController {
         }
     }
 
+    @Get('deleteAll')
+    @Middleware([])
+    async deleteAll(req: Request, res: Response, next: NextFunction) {
+        try {
+            const courses: any = await this.classroom.course.list();
+            const response = [];
+
+            console.log(typeof courses.data.courses);
+
+            for(let course of courses.data.courses) {
+                try {                    
+                    response.push(await this.classroom.course.remove(course.id));
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+
+            res.status(200).json(response);
+        } catch (ex) {
+            console.log(ex);
+            return res.status(500).json(ex);
+        }
+    }
+
+/* 
     @Get(':id')
     @Middleware([])
     async getOne(req: Request, res: Response, next: NextFunction) {
@@ -64,5 +91,5 @@ export class CourseController {
             return res.status(500).json(ex);
         }
     }
-
+ */
 }

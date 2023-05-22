@@ -1,20 +1,34 @@
-import { Student } from 'app/models/student';
-import { Moodle } from '../util/moodle';
+import { Classroom } from 'app/util/classroom';
+import { classroom_v1 } from 'googleapis';
 
 export class StudentConsumer {
 
-    static async sync(user: Student) {
-        console.log(user);
-        const response = await Moodle.createUser(user);
-        console.trace(response)
-        user.student.userid = response.id;
-        this._enroll(user);
+    private classroom = new Classroom();
 
+    async sync(data: any) {
+        const responses = [];
+
+        for (let invite of await this._castToClassroom(data)) {
+            responses.push(await this.classroom.user.invite(invite));
+        }
+
+        return responses;
     }
 
-    private static async _enroll(user: Student) {
-        const response = await Moodle.enrolUser(user);
-        console.trace(response)
-    }
+    private async _castToClassroom(data: any[]): Promise<classroom_v1.Params$Resource$Invitations$Create[]> {
+        const courses = await this.classroom.course.list();
 
+        console.log(courses.data.courses);
+
+        if(!courses.data.courses) return [];
+
+        return courses.data.courses!.map((course) => data.map((user) => ({
+            requestBody: {
+                userId: user.email,
+                courseId: course.id,
+                role: 'STUDENT'
+
+            }
+        }))).flat(1);
+    }
 }

@@ -1,39 +1,52 @@
-import { Classroom } from "app/util/google";
+import { Classroom } from "app/util/classroom";
 import { classroom_v1 } from "googleapis";
 
 export class CourseConsumer {
 
-    static categories: any[];
+    private classroom = new Classroom();
+    private courses: classroom_v1.Schema$Course[] = [];
 
-    static async sync(params: any[]) {
-        const responses: CourseResponse[][] = [];
-        this.categories = await this._getCategories(params);
+    async sync(params: any[]) {
+        this.courses = (await this.classroom.course.list()).data.courses!;
+        const responses: any[] = [];
 
-        for (const course of this._castToMoodle(params)) {
-            responses.push(await Classroom.createCourse([course]));
+        this._removingExistingCourses(params);
+
+        for (const course of this._castToClassroom(params)) {
+            responses.push(await this.classroom.course.create(course));
         }
 
         return responses;
     }
 
-    private static async _getCategories(params: any[]): Promise<any[]> {
-        return await Moodle.getCategory();
-    }
-
-    private static _castToClassroom(params: any[]) {
+    private _castToClassroom(params: any[]): classroom_v1.Params$Resource$Courses$Create[] {
         return params.map((item: any) => {
             const course: classroom_v1.Params$Resource$Courses$Create = {
-                requestBody {
-                    id: item.id,
-                    item: item.name
-                },
+                requestBody: {
+                    name: item.nome,
+                    ownerId: "diga.bento@gmail.com",
+                    
+                }
             }
 
             return course;
         });
     }
 
-    private static _normalize(str: string | undefined) {
-        return str?.normalize('NFC').replace(/ /g,'').replace(/[^a-zA-Z0-9 ]/g, '') || '';
+    private _removingExistingCourses(params: any[]) {
+        if(!this.courses) return;
+
+        for(let course of this.courses) {
+            const index = params.findIndex(item => item.nome == course.name);
+            console.log(index);
+            if(index !== -1) params.splice(index, 1);
+        }
+
+        /* params = this.courses.fr(curso => {
+            return !this.courses.find(course => {
+                console.log(course.name, curso.nome, `[${course.name == curso.nome}]`);
+                return course.name == curso.nome;
+            });
+        }); */
     }
 }

@@ -1,7 +1,7 @@
-import { Authorize, Classroom } from "./app/util/google";
+import { Authorize, Classroom } from "./app/util/classroom";
 import { GoogleAPIServer } from "./server";
 
-const server = new GoogleAPIServer();
 Classroom.init(new Authorize(__dirname + '/app/config/credentials.json'));
 
-server.start(3000);
+const server = new GoogleAPIServer();
+server.start(4444);
